@@ -1,27 +1,27 @@
-name: model-training
+name: model-Training
 on: [push]
 jobs:
   run:
-    runs-on: ubuntu-latest
+    runs-on: [ubuntu-latest]
+    container: docker://dvcorg/cml-py3:latest
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-python@v4
-      - uses: iterative/setup-cml@v1
-      - name: cml
+      - uses: actions/checkout@v2
+      - name: cml_run
         env:
-          REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
         run: |
+          # Your ML workflow goes here
           pip install -r requirements.txt
-          python code.py 
+          python train.py
           
-          echo "## MODEL METRICS" > report.md
+          echo "## Model metrics" > report.md
           cat metrics.txt >> report.md
           
-          echo "## Data Viz" >> report.md
-          cml_publish feature_importance.png --md >> report.md
-          cml_pulish residuals.png --md >> report.md
+          echo "## Data viz" >> report.md
+          cml-publish feature_importance.png --md >> report.md
+          cml-publish residuals.png --md >> report.md
           
-          cml_send_comment report.md
+          cml-send-comment report.md
           
           
           
