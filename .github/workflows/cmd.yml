@@ -7,13 +7,21 @@ jobs:
       - uses: actions/checkout@v3
       - uses: actions/setup-python@v4
       - uses: iterative/setup-cml@v1
-      - name: Train model
+      - name: cml
         env:
           REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           pip install -r requirements.txt
           python code.py 
           
-          echo "MODEL METRICS"
-          cat metrics.txt
+          echo "## MODEL METRICS" > report.md
+          cat metrics.txt >> report.md
+          
+          echo "## Data Viz" >> report.md
+          cml_publish feature_importance.png --md >> report.md
+          cml_pulish residuals.png --md >> report.md
+          
+          cml_send_comment report.md
+          
+          
           
